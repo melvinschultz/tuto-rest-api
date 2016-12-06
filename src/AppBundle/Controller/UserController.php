@@ -5,7 +5,6 @@ namespace AppBundle\Controller;
 use AppBundle\Form\Type\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les annotations
 use AppBundle\Entity\User;
@@ -38,7 +37,7 @@ class UserController extends Controller
         /* @var $user User */
 
         if (empty($user)) {
-            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+            return \FOS\RestBundle\View\View::create(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
 
         return $user;
@@ -79,6 +78,51 @@ class UserController extends Controller
         if ($user) {
             $em->remove($user);
             $em->flush();
+        }
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Put("/users/{id}")
+     */
+    public function updateUserAction(Request $request)
+    {
+        return $this->updateUser($request, true);
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Patch("/users/{id}")
+     */
+    public function patchUserAction(Request $request)
+    {
+        return $this->updateUser($request, false);
+    }
+
+    public function updateUser(Request $request, $clearMissing)
+    {
+        $user = $this->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:User')
+            ->find($request->get('id'));
+        /* @var $user User */
+
+        if (empty($user)) {
+            return \FOS\RestBundle\View\View::create(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->submit($request->request->all(), $clearMissing); // validation des données
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            // l'entité vient de la base, donc le merge n'est pas nécessaire.
+            // il est utilisé juste par soucis de clarté
+            $em->merge($user);
+            $em->flush();
+            return $user;
+        } else {
+            return $form;
         }
     }
 }

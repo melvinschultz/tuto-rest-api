@@ -6,6 +6,10 @@ places:
     resource: "@AppBundle/Controller/PlaceController.php"
     type:     rest
 
+prices:
+    resource: "@AppBundle/Controller/Place/PriceController.php"
+    type:     rest
+
 users:
     resource: "@AppBundle/Controller/UserController.php"
     type:     rest
