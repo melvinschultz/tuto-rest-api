@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les annotations
+use AppBundle\Form\Type\PlaceType;
 use AppBundle\Entity\Place;
 
 class PlaceController extends Controller
@@ -41,5 +42,43 @@ class PlaceController extends Controller
         }
 
         return $place;
+    }
+
+    /**
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\Post("/places")
+     */
+    public function postPlacesAction(Request $request)
+    {
+        $place = new Place();
+        $form = $this->createForm(PlaceType::class, $place);
+
+        $form->submit($request->request->all()); // validation des données
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($place);
+            $em->flush();
+            return $place;
+        } else {
+            return $form;
+        }
+    }
+
+    /**
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/places/{id}")
+     */
+    public function removePlaceAction(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $place = $em->getRepository('AppBundle:Place')
+            ->find($request->get('id'));
+        /* @var $place Place */
+
+        if ($place) {
+            $em->remove($place);
+            $em->flush();
+        }
     }
 }

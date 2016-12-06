@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\Type\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,5 +42,43 @@ class UserController extends Controller
         }
 
         return $user;
+    }
+
+    /**
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\Post("/users")
+     */
+    public function postUsersAction(Request $request)
+    {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->submit($request->request->all()); // validation des données
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($user);
+            $em->flush();
+            return $user;
+        } else {
+            return $form;
+        }
+    }
+
+    /**
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/users/{id}")
+     */
+    public function removeUserAction(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $user = $em->getRepository('AppBundle:User')
+            ->find($request->get('id'));
+        /* @var $user User */
+
+        if ($user) {
+            $em->remove($user);
+            $em->flush();
+        }
     }
 }
