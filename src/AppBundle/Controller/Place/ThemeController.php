@@ -8,11 +8,12 @@ use AppBundle\Form\Type\ThemeType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les annotations
 
 class ThemeController extends Controller
 {
     /**
-     * @Rest\View(serializeGroups={"theme"})
+     * @Rest\View(serializerGroups={"theme"})
      * @Rest\Get("/places/{id}/themes")
      */
     public function getThemesAction(Request $request)

@@ -31,7 +31,7 @@ class Preference
     protected $name;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="integer")
      */
     protected $value;
 

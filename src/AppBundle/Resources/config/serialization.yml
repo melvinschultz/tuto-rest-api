@@ -26,7 +26,7 @@ AppBundle\Entity\Theme:
     attributes:
         id:
             groups: ['place', 'theme']
-        type:
+        name:
             groups: ['place', 'theme']
         value:
             groups: ['place', 'theme']
