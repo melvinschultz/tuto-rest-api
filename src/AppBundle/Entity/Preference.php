@@ -112,4 +112,9 @@ class Preference
         $this->user = $user;
         return $this;
     }
+
+    public function match(Theme $theme)
+    {
+        return $this->name === $theme->getName();
+    }
 }
