@@ -80,11 +80,16 @@ class UserController extends Controller
     public function postUsersAction(Request $request)
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user, ['validation_groups' => ['Default', 'New']]);
 
         $form->submit($request->request->all()); // validation des données
 
         if ($form->isValid()) {
+            $encoder = $this->get('security.password_encoder');
+            // le mot de passe en claire est encodé avant la sauvegarde
+            $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($encoded);
+
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($user);
             $em->flush();
@@ -137,14 +142,26 @@ class UserController extends Controller
         /* @var $user User */
 
         if (empty($user)) {
-            return \FOS\RestBundle\View\View::create(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+            return $this->userNotFound();
         }
 
-        $form = $this->createForm(UserType::class, $user);
+        if ($clearMissing) { // si une mise à jour complète, le mot de passe doit être validé
+            $options = ['validaition_groups' => ['Default', 'FullUpdate']];
+        } else {
+            $options = []; // le groupe de validation par défaut de Symfony est Default
+        }
+
+        $form = $this->createForm(UserType::class, $user, $options);
 
         $form->submit($request->request->all(), $clearMissing); // validation des données
 
         if ($form->isValid()) {
+            // si l'utilisateur veut changer son mot de passe
+            if (!empty($user->getPlainPassword())) {
+                $encoder = $this->get('security.password_encoder');
+                $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+                $user->setPassword($encoded);
+            }
             $em = $this->get('doctrine.orm.entity_manager');
             // l'entité vient de la base, donc le merge n'est pas nécessaire.
             // il est utilisé juste par soucis de clarté

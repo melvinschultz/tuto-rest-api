@@ -19,6 +19,12 @@ AppBundle\Entity\User:
          lastname:
               - NotBlank: ~
               - Type: string
+         plainPassword:
+              - NotBlank: { groups: [New, FullUpdate] }
+              - Type: string
+              - Length:
+                  min: 4
+                  max: 50
          email:
               - NotBlank: ~
               - Email: ~
