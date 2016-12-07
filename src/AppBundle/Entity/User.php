@@ -8,6 +8,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -39,6 +40,17 @@ class User
      * @ORM\Column(type="string")
      */
     protected $email;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Preference", mappedBy="user")
+     * @var Preference[]
+     */
+    protected $preferences;
+
+    public function __construct()
+    {
+        $this->preferences = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -109,6 +121,24 @@ class User
     public function setEmail($email)
     {
         $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPreferences()
+    {
+        return $this->preferences;
+    }
+
+    /**
+     * @param mixed $preferences
+     * @return User
+     */
+    public function setPreferences($preferences)
+    {
+        $this->preferences = $preferences;
         return $this;
     }
 }

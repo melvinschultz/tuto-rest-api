@@ -14,6 +14,10 @@ themes:
     resource: "@AppBundle/Controller/Place/ThemeController.php"
     type:     rest
 
+preferences:
+    resource: "@AppBundle/Controller/Place/PreferenceController.php"
+    type:     rest
+
 users:
     resource: "@AppBundle/Controller/UserController.php"
     type:     rest

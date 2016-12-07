@@ -37,7 +37,21 @@ AppBundle\Entity\Price:
 
 AppBundle\Entity\Theme:
      properties:
-          type:
+          name:
+               - NotNull: ~
+               - Choice:
+                   choices: [art, architecture, history, sport, science-fiction]
+          value:
+               - NotNull: ~
+               - Type: numeric
+               - GreaterThan:
+                   value: 0
+               - LessThanOrEqual:
+                   value: 10
+
+AppBundle\Entity\Preference:
+     properties:
+          name:
                - NotNull: ~
                - Choice:
                    choices: [art, architecture, history, sport, science-fiction]
