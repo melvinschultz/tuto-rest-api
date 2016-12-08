@@ -7,6 +7,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
 
 framework:
     #esi:             ~
@@ -19,7 +20,7 @@ framework:
     csrf_protection: ~
     validation:      { enable_annotations: true }
     serializer:
-        enabled: true
+        enabled: false
     templating:
         engines: ['twig']
     default_locale:  "%locale%"
@@ -66,6 +67,7 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+# FOSRestBundle Configuration
 fos_rest:
     routing_loader:
         include_format: false
@@ -77,7 +79,7 @@ fos_rest:
     format_listener:
         rules:
             - { path: '^/', priorities: ['json', 'xml'], fallback_format: 'json', prefer_extension: false }
-#    configuration à rajouter pour désactiver/activer le body listener
+    # configuration à rajouter pour désactiver/activer le body listener
     body_listener:
         enabled: true
     param_fetcher_listener:
@@ -89,3 +91,12 @@ fos_rest:
             'Symfony\Component\Security\Core\Exception\BadCredentialsException': true
         codes:
             'Symfony\Component\Security\Core\Exception\BadCredentialsException': 401
+    serializer:
+        serialize_null: true
+
+# JMSSerializerBundle Configuration
+jms_serializer:
+    handlers:
+        datetime:
+            default_format: "\"Y-m-d\\TH:i:sP\""
+            default_timezone: "UTC"
