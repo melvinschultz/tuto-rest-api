@@ -80,6 +80,8 @@ fos_rest:
 #    configuration à rajouter pour désactiver/activer le body listener
     body_listener:
         enabled: true
+    param_fetcher_listener:
+        enabled: true
     exception:
         enabled: true
         messages:
