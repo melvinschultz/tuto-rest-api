@@ -2,18 +2,25 @@
 
 namespace AppBundle\Controller;
 
-use FOS\RestBundle\Request\ParamFetcher;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations as Rest; // alias pour toutes les annotations
 use FOS\RestBundle\Controller\Annotations\QueryParam;
+use FOS\RestBundle\Request\ParamFetcher;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use AppBundle\Form\Type\PlaceType;
 use AppBundle\Entity\Place;
 
 class PlaceController extends Controller
 {
     /**
+     * @ApiDoc(
+     *     description="Récupère la liste des lieux de l'application",
+     *     output= { "class"=Place::class, "collection"=true, "groups"={"place"} }
+     * )
+     *
+     *
      * @Rest\View(serializerGroups={"place"})
      * @Rest\Get("/places")
      * @QueryParam(name="offset", requirements="\d+", default="", description="Index de début de la pagination")
