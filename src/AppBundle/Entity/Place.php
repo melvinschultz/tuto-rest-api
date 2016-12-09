@@ -29,6 +29,8 @@ class Place
     protected $id;
 
     /**
+     * Nom unique du lieu
+     *
      * @ORM\Column(type="string")
      */
     protected $name;
